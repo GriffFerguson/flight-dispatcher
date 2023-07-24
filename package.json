@@ -1,0 +1,16 @@
+{
+  "name": "dispatch",
+  "version": "0.0.1",
+  "description": "Flight dispatch serivce",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^20.4.4",
+    "typescript": "^5.1.6"
+  }
+}
