@@ -18,6 +18,16 @@ class RouteDB extends DB {
         super((0, path_1.join)(__dirname, "../data/routes.json"));
         this.id = 0;
     }
+    save(data) {
+        for (var i = 0; i < this.db.length; i++) {
+            if (this.db[i].departure.icao == data.departure.icao && this.db[i].arrival.icao == data.arrival.icao) {
+                console.error("Route already exists");
+                return;
+            }
+        }
+        this.db.push(data);
+        (0, fs_1.writeFileSync)(this.dbURL, JSON.stringify(this.db), { encoding: "utf8" });
+    }
 }
 exports.RouteDB = RouteDB;
 class AirportDB extends DB {

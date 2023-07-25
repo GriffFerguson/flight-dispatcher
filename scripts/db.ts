@@ -20,6 +20,17 @@ export class RouteDB extends DB {
     constructor() {
         super(join(__dirname, "../data/routes.json"))
     }
+
+    save(data: Route) {
+        for(var i = 0; i < this.db.length; i++) {
+            if(this.db[i].departure.icao == data.departure.icao && this.db[i].arrival.icao == data.arrival.icao) {
+                console.error("Route already exists");
+                return;
+            }
+        }
+        this.db.push(data);
+        writeFileSync(this.dbURL, JSON.stringify(this.db), {encoding:"utf8"});
+    }
 }
 
 export class AirportDB extends DB {
