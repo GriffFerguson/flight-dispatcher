@@ -1,11 +1,48 @@
-import { readFileSync, writeFileSync } from "fs";
-const dbURL = "./routes.json";
-var db: Array<Route> = JSON.parse(readFileSync(dbURL, {encoding:"utf8"}));
+import { readFileSync, writeFileSync, PathOrFileDescriptor } from "fs";
+import {join} from "path";
+
+class DB {
+    db: Array<any>;
+    dbURL: PathOrFileDescriptor
+    constructor(url: PathOrFileDescriptor) {
+        this.db = JSON.parse(readFileSync(url, {encoding:"utf8"}));
+        this.dbURL = url;
+    }
+    
+    save(data: Object): void {
+        this.db.push(data);
+        writeFileSync(this.dbURL, JSON.stringify(this.db), {encoding:"utf8"});
+    }
+}
+
+export class RouteDB extends DB {
+    id = 0;
+    constructor() {
+        super(join(__dirname, "../data/routes.json"))
+    }
+}
+
+export class AirportDB extends DB {
+    constructor() {
+        super(join(__dirname, "../data/airports.json"))
+    }
+
+    lookup(code: String): Airport | boolean {
+        if (code.length == 4) var search = "icao";
+        else var search = "iata";
+        
+        for (var i = 0; i < this.db.length; i++) {
+            if (this.db[i][search] == code) return this.db[i]
+        }
+        return false;
+    }
+}
 
 interface AptLocation {
     city: String,
     state: String,
-    country: String
+    country: String,
+    iso: String
 }
 
 export class Route {
@@ -23,19 +60,15 @@ export class Airport {
     location: AptLocation;
     name: String;
 
-    constructor(icao: String, iata: String, name: String, city: String, country: String, state?: String) {
+    constructor(icao: String, iata: String, name: String, iso: String, city: String, country: String, state?: String) {
         this.icao = icao;
         this.iata = iata;
         this.name = name;
         this.location = {
             city: city,
             state: state || "",
-            country: country
+            country: country,
+            iso: iso
         }
     }
-}
-
-export function saveRoute(route: Route) {
-    db.push(route);
-    writeFileSync(dbURL, JSON.stringify(db), {encoding:"utf8"});
 }
