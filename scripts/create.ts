@@ -1,4 +1,4 @@
-import * as Dispatch from "../db";
+import * as Dispatch from "./db";
 import fetch from "node-fetch"
 require("dotenv").config();
 
@@ -60,5 +60,4 @@ export async function createRoute(dep: String, arr: String): Promise<void> {
     console.log("Done!")
 }
 
-if (!process.argv[2] || !process.argv[3]) throw "Invalid arguments";
-else createRoute(process.argv[2], process.argv[3]);
+if (process.argv[2] || process.argv[3]) createRoute(process.argv[2], process.argv[3]);

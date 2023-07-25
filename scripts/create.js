@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRoute = void 0;
-const Dispatch = require("../db");
+const Dispatch = require("./db");
 const node_fetch_1 = require("node-fetch");
 require("dotenv").config();
 const routes = new Dispatch.RouteDB();
@@ -49,7 +49,5 @@ async function createRoute(dep, arr) {
     console.log("Done!");
 }
 exports.createRoute = createRoute;
-if (!process.argv[2] || !process.argv[3])
-    throw "Invalid arguments";
-else
+if (process.argv[2] || process.argv[3])
     createRoute(process.argv[2], process.argv[3]);
