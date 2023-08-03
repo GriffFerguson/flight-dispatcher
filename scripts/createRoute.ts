@@ -35,6 +35,7 @@ async function fetchAirport(code: String): Promise<Dispatch.Airport | void> {
                     result.icao!,
                     result.iata!,
                     result.name!,
+                    [result.latitude, result.longitude],
                     result.country_iso!,
                     location[0],
                     location.length == 3 ? location[2] : location [1],
@@ -61,3 +62,4 @@ export async function createRoute(dep: String, arr: String): Promise<void> {
 }
 
 if (process.argv[2] || process.argv[3]) createRoute(process.argv[2], process.argv[3]);
+if (process.argv[4] == "return") createRoute(process.argv[3], process.argv[2]);

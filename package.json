@@ -4,18 +4,20 @@
   "description": "Flight dispatch serivce",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc && node scripts/server.js"
   },
-  "author": "",
+  "author": "Stratos Virtual Airlines",
   "license": "ISC",
   "private": true,
   "devDependencies": {
+    "@types/express": "^4.17.17",
     "@types/node": "^20.4.4",
     "@types/node-fetch": "^2.6.4",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "node-fetch": "^2.6.12"
   }
 }
