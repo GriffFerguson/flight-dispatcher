@@ -147,50 +147,12 @@ function greatCircle(lat1, lon1, lat2, lon2) {
 }
 function flightNumber(depCode, arrCode) {
     var id = [0, "0"];
-    if (depCode[0] == arrCode[0]) {
-        switch (depCode[0]) {
-            case "C":
-            case "K":
-            case "M":
-            case "B":
-                id[0] = "0";
-                break;
-            case "E":
-            case "L":
-                id[0] = "1";
-                break;
-            case "S":
-            case "T":
-                id[0] = "2";
-                break;
-            case "G":
-            case "D":
-            case "H":
-            case "F":
-                id[0] = "3";
-                break;
-            case "U":
-            case "O":
-            case "Z":
-            case "V":
-            case "R":
-            case "W":
-            case "A":
-                id[0] = "4";
-                break;
-            case "Y":
-            case "N":
-                id[0] = "5";
-                break;
-            case "P":
-                id[0] = "6";
-                break;
-            default:
-                id[0] = "7";
-        }
-    }
+    var depRegion = regionID(depCode);
+    var arrRegion = regionID(arrCode);
+    if (depRegion == arrRegion)
+        id[0] = depRegion;
     else
-        id[0] = "8";
+        id[0] = 8;
     id[1] = (new RouteDB()).getID(id[0]);
     if (id[1] < 100) {
         if (id[1] < 10) {
@@ -200,4 +162,40 @@ function flightNumber(depCode, arrCode) {
             id[1] = "0" + id[1];
     }
     return `${id[0]}${id[1]}`;
+}
+function regionID(code) {
+    switch (code[0]) {
+        case "C":
+        case "K":
+        case "M":
+        case "B":
+            return 0;
+        case "E":
+        case "L":
+            return 1;
+        case "S":
+        case "T":
+            return 2;
+            break;
+        case "G":
+        case "D":
+        case "H":
+        case "F":
+            return 3;
+        case "U":
+        case "O":
+        case "Z":
+        case "V":
+        case "R":
+        case "W":
+        case "A":
+            return 4;
+        case "Y":
+        case "N":
+            return 5;
+        case "P":
+            return 6;
+        default:
+            return 7;
+    }
 }

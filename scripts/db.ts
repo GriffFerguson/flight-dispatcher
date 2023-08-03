@@ -192,57 +192,14 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
 
   function flightNumber(depCode: String, arrCode: String): String {
     var id = [0,"0"];
+    // Identify region
+    var depRegion = regionID(depCode);
+    var arrRegion = regionID(arrCode);
+
     // First number
-    if (depCode[0] == arrCode[0]) {
-        switch (depCode[0]) {
-            // North America
-            case "C":
-            case "K":
-            case "M":
-            case "B":
-                id[0] = "0";
-                break;
-            // Europe
-            case "E":
-            case "L":
-                id[0] = "1";
-                break;
-            // South America
-            case "S":
-            case "T":
-                id[0] = "2";
-                break;
-            // Africa
-            case "G":
-            case "D":
-            case "H":
-            case "F":
-                id[0] = "3";
-                break;
-            // Asia
-            case "U":
-            case "O":
-            case "Z":
-            case "V":
-            case "R":
-            case "W":
-            case "A":
-                id[0] = "4";
-                break;
-            // Australia / Oceania
-            case "Y":
-            case "N":
-                id[0] = "5";
-                break;
-            // Pacific Islands
-            case "P":
-                id[0] = "6";
-                break;
-            // Others
-            default:
-                id[0] = "7";
-        }
-    } else id[0] = "8";
+    if (depRegion == arrRegion) id[0] = depRegion;
+    else id[0] = 8;
+
     // Other numbers
     id[1] = (new RouteDB()).getID(id[0] as unknown as number);
     if (id[1] < 100) {
@@ -251,4 +208,49 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
         } else id[1] = "0" + id[1]
     }
     return `${id[0]}${id[1]}`;
+  }
+
+  function regionID (code: String): number {
+    switch (code[0]) {
+        // North America
+        case "C":
+        case "K":
+        case "M":
+        case "B":
+            return 0;
+        // Europe
+        case "E":
+        case "L":
+            return 1;
+        // South America
+        case "S":
+        case "T":
+            return 2;
+            break;
+        // Africa
+        case "G":
+        case "D":
+        case "H":
+        case "F":
+            return 3;
+        // Asia
+        case "U":
+        case "O":
+        case "Z":
+        case "V":
+        case "R":
+        case "W":
+        case "A":
+            return 4;
+        // Australia / Oceania
+        case "Y":
+        case "N":
+            return 5;
+        // Pacific Islands
+        case "P":
+            return 6;
+        // Others
+        default:
+            return 7;
+    }
   }
