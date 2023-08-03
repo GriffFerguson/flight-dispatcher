@@ -96,11 +96,12 @@ class AirportDB extends DB {
 }
 exports.AirportDB = AirportDB;
 class Route {
-    constructor(dep, arr) {
+    constructor(dep, arr, index) {
         this.departure = dep.icao;
         this.arrival = arr.icao;
         this.distance = greatCircle(dep.location.coordinates[0], dep.location.coordinates[1], arr.location.coordinates[0], arr.location.coordinates[1]);
         this.id = flightNumber(this.departure, this.arrival);
+        this.pax = index;
     }
 }
 exports.Route = Route;

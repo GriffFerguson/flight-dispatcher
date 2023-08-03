@@ -116,7 +116,8 @@ export class Route {
     arrival: String;
     distance: Number;
     id: String;
-    constructor(dep: Airport, arr: Airport) {
+    pax: Number;
+    constructor(dep: Airport, arr: Airport, index: Number) {
         this.departure = dep.icao;
         this.arrival = arr.icao;
         this.distance = greatCircle(
@@ -126,6 +127,7 @@ export class Route {
             arr.location.coordinates[1]
         )
         this.id = flightNumber(this.departure, this.arrival);
+        this.pax = index;
     }
 }
 

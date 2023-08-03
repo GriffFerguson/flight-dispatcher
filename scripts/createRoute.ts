@@ -56,10 +56,10 @@ export async function createRoute(dep: String, arr: String): Promise<void> {
     const arrival: Dispatch.Airport = await fetchAirport(arr)! as Dispatch.Airport;
     
     console.log("Saving route")
-    const route = new Dispatch.Route(departure, arrival);
+    const route = new Dispatch.Route(departure, arrival, parseInt(process.argv[4]));
     routes.save(route);
     console.log("Done!")
 }
 
 if (process.argv[2] || process.argv[3]) createRoute(process.argv[2], process.argv[3]);
-if (process.argv[4] == "return") createRoute(process.argv[3], process.argv[2]);
+if (process.argv[5] == "return") createRoute(process.argv[3], process.argv[2]);
