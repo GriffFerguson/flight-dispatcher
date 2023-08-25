@@ -27,29 +27,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const fs_1 = require("fs");
 const path_1 = require("path");
 const Dispatch = __importStar(require("./db"));
 const createRoute_1 = require("./createRoute");
 const RouteDatabase = new Dispatch.RouteDB();
 const AirportDatabase = new Dispatch.AirportDB();
 const app = (0, express_1.default)();
+app.use("/static", express_1.default.static((0, path_1.join)(__dirname, "../assets")));
+app.use("/", express_1.default.static((0, path_1.join)(__dirname, "../pages")));
 app.listen("5000");
-app.get("/", (req, res) => {
-    var file = (0, fs_1.readFileSync)((0, path_1.join)(__dirname, "../pages/index.html"), { encoding: "utf8" });
-    res.send(file);
-});
 app.get("/route", (req, res) => {
-    res.send(RouteDatabase);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(RouteDatabase));
     res.end();
 });
 app.get("/airport", (req, res) => {
-    res.send(AirportDatabase.db);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(AirportDatabase.db));
     res.end();
 });
 app.use("/route/:dep", (req, res, next) => {
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
     var possibleRoutes = RouteDatabase.lookupDeparture(req.params.dep);
-    res.send(possibleRoutes);
+    res.write(JSON.stringify(possibleRoutes));
     res.end();
 });
 app.use("/route/:dep/:arr", (req, res, next) => {
@@ -58,5 +64,9 @@ app.use("/route/:dep/:arr", (req, res, next) => {
         (0, createRoute_1.createRoute)(req.params.dep, req.params.arr);
         route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     }
-    res.send(route);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.send(JSON.stringify(route));
+    res.end();
 });

@@ -76,6 +76,7 @@ async function createRoute(dep, arr) {
 }
 exports.createRoute = createRoute;
 if (process.argv[2] || process.argv[3])
-    createRoute(process.argv[2], process.argv[3]);
-if (process.argv[5] == "return")
-    createRoute(process.argv[3], process.argv[2]);
+    createRoute(process.argv[2], process.argv[3]).then(() => {
+        if (process.argv[5] == "return")
+            createRoute(process.argv[3], process.argv[2]);
+    });

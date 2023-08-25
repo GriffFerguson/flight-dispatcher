@@ -176,7 +176,6 @@ function regionID(code) {
         case "S":
         case "T":
             return 2;
-            break;
         case "G":
         case "D":
         case "H":

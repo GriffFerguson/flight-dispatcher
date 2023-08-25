@@ -8,26 +8,37 @@ const RouteDatabase = new Dispatch.RouteDB();
 const AirportDatabase = new Dispatch.AirportDB();
 
 const app = express();
+app.use("/static", express.static(join(__dirname, "../assets")));
+app.use("/", express.static(join(__dirname, "../pages")));
 app.listen("5000");
 
-app.get("/", (req, res) => {
-    var file = readFileSync(join(__dirname, "../pages/index.html"), {encoding:"utf8"});
-    res.send(file);
-})
+// app.get("/", (req, res) => {
+//     var file = readFileSync(join(__dirname, "../pages/index.html"), {encoding:"utf8"});
+//     res.write(file);
+// })
 
 app.get("/route", (req, res) => {
-    res.send(RouteDatabase);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(RouteDatabase));
     res.end();
 })
 
 app.get("/airport", (req, res) => {
-    res.send(AirportDatabase.db);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(AirportDatabase.db));
     res.end();
 })
 
 app.use("/route/:dep", (req, res, next) => {
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    })
     var possibleRoutes = RouteDatabase.lookupDeparture(req.params.dep);
-    res.send(possibleRoutes);
+    res.write(JSON.stringify(possibleRoutes));
     res.end();
 })
 
@@ -37,5 +48,9 @@ app.use("/route/:dep/:arr", (req, res, next) => {
         createRoute(req.params.dep, req.params.arr);
         route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     }
-    res.send(route);
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    })
+    res.send(JSON.stringify(route));
+    res.end();
 })

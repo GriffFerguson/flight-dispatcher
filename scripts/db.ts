@@ -226,7 +226,6 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
         case "S":
         case "T":
             return 2;
-            break;
         // Africa
         case "G":
         case "D":
