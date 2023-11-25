@@ -1,0 +1,98 @@
+doctype html 
+html(lang="en")
+    head 
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="/static/style.css")
+        link(rel="stylesheet", href="/static/route.css")
+        title #{dep.icao} - #{arr.icao} Route Details | Flight Dispatcher
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    body 
+        h1 
+            | Stratos Virtual Airways Dispatcher Route Details:
+            br 
+            | #{dep.icao} (#{dep.name}) to #{arr.icao} (#{arr.name})
+        #map
+        #route-info
+            #metadata 
+                h2 Route Information
+                p
+                    b Flight Number: 
+                    span 2VA#{route.id}
+                p 
+                    b Distance: 
+                    span #{route.dis}nm
+                p 
+                    b Estimated Time Enroute: 
+                    span= Math.floor(route.dis / 300) + "hrs " + Math.round(((route.dis / 300) - Math.floor(route.dis / 300)) * 60) + "mins"
+            #airport-box
+                h2 Departure
+                p 
+                    b ICAO / IATA: 
+                    span #{dep.icao} / #{dep.iata}
+                p 
+                    b Airport Name: 
+                    span #{dep.name}
+                p 
+                    b Location:
+                ul 
+                    li 
+                        b City: 
+                        span #{dep.location.city}
+                    li 
+                        b State/Province: 
+                        span #{dep.location.state}
+                    li
+                        b Country: 
+                        span #{dep.location.country}
+            #airport-box 
+                h2 Arrival
+                p 
+                    b ICAO / IATA: 
+                    span #{arr.icao} / #{arr.iata}
+                p 
+                    b Airport Name: 
+                    span #{arr.name}
+                p 
+                    b Location:
+                ul 
+                    li 
+                        b City: 
+                        span #{arr.location.city}
+                    li 
+                        b State/Province: 
+                        span #{arr.location.state}
+                    li
+                        b Country: 
+                        span #{arr.location.country}
+        script. 
+            var map = L.map("map", {
+                center: [#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}],
+                zoom: 4
+            });
+
+            /*map.dragging.disable();
+            map.touchZoom.disable();
+            map.doubleClickZoom.disable();
+            map.scrollWheelZoom.disable();
+            map.boxZoom.disable();
+            map.keyboard.disable();
+            if (map.tap) map.tap.disable();
+            document.getElementById('map').style.cursor='default';*/
+
+            L.tileLayer(`https://tile.openstreetmap.org/{z}/{x}/{y}.png`, {
+                maxZoom:19,
+                attribution: "© <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
+            }).addTo(map);
+
+            var depMarker = L.marker([#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}], {alt: "#{dep.icao}"}).addTo(map);
+            depMarker.bindPopup(`<b>#{dep.icao} / #{dep.iata}</b><br>#{dep.name}<br>#{dep.location.city}, #{dep.location.state}, #{dep.location.country}`);
+            
+            var arrMarker = L.marker([#{arr.location.coordinates[0]}, #{arr.location.coordinates[1]}], {alt: "#{arr.icao}"}).addTo(map);
+            arrMarker.bindPopup(`<b>#{arr.icao} / #{arr.iata}</b><br>#{arr.name}<br>#{arr.location.city}, #{arr.location.state}, #{arr.location.country}`);
+
+            L.polygon([
+                [#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}],
+                [#{arr.location.coordinates[0]}, #{arr.location.coordinates[1]}]
+            ]).addTo(map);

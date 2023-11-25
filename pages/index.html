@@ -9,7 +9,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
-    <h1>Stratos Airways - Flight Dispatcher</h1>
+    <h1>Stratos Virtual Airways - Flight Dispatcher</h1>
     <div id="map"></div>
     <form id="loader">
         <label for="departure">Enter departure ICAO:</label>
@@ -74,7 +74,7 @@
                 if (!onMap.includes(json[i].dep)) {
                     onMap.push(json[i].dep);
                     var depMarker = L.marker([dep.location.coordinates[0], dep.location.coordinates[1]], {alt: dep.icao}).addTo(markers);
-                    depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}`);;
+                    depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}`);
                 }
                 
 
@@ -83,7 +83,7 @@
                 if (!onMap.includes(json[i].arr)) {
                     onMap.push(json[i].arr);
                     var arrMarker = L.marker([arr.location.coordinates[0], arr.location.coordinates[1]], {alt: arr.icao}).addTo(markers);
-                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}`)
+                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}`);
                 }
 
                 // Draw route line

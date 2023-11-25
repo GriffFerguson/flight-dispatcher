@@ -29,12 +29,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = require("path");
 const Dispatch = __importStar(require("./db"));
+const pug_1 = __importDefault(require("pug"));
 const RouteDatabase = new Dispatch.RouteDB();
 const AirportDatabase = new Dispatch.AirportDB();
 const app = (0, express_1.default)();
 app.use("/static", express_1.default.static((0, path_1.join)(__dirname, "../assets")));
 app.use("/", express_1.default.static((0, path_1.join)(__dirname, "../pages")));
 app.listen("5000");
+const routeTemplate = pug_1.default.compileFile("./templates/route.pug");
+app.get("/route/:dep/:arr", (req, res) => {
+    var html = routeTemplate({
+        dep: AirportDatabase.lookup(req.params.dep),
+        arr: AirportDatabase.lookup(req.params.arr),
+        route: RouteDatabase.lookup(req.params.dep, req.params.arr)
+    });
+    res.writeHead(200);
+    res.end(html);
+});
 app.get("/api/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
@@ -49,7 +60,7 @@ app.get("/api/airport", (req, res) => {
     res.write(JSON.stringify(AirportDatabase.db));
     res.end();
 });
-app.use("/api/route/:dep", (req, res, next) => {
+app.get("/api/route/:dep", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
@@ -57,7 +68,7 @@ app.use("/api/route/:dep", (req, res, next) => {
     res.write(JSON.stringify(possibleRoutes));
     res.end();
 });
-app.use("/api/route/:dep/:arr", (req, res, next) => {
+app.get("/api/route/:dep/:arr", (req, res) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     if (!route) {
         res.writeHead(404);

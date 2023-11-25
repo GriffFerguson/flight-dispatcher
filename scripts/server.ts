@@ -1,8 +1,8 @@
 import express from "express";
-import { readFileSync } from "fs";
 import {join} from "path";
 import * as Dispatch from "./db";
 import {createRoute} from "./createRoute";
+import pug from "pug";
 
 const RouteDatabase = new Dispatch.RouteDB();
 const AirportDatabase = new Dispatch.AirportDB();
@@ -12,11 +12,19 @@ app.use("/static", express.static(join(__dirname, "../assets")));
 app.use("/", express.static(join(__dirname, "../pages")));
 app.listen("5000");
 
-// app.get("/", (req, res) => {
-//     var file = readFileSync(join(__dirname, "../pages/index.html"), {encoding:"utf8"});
-//     res.write(file);
-// })
+const routeTemplate = pug.compileFile("./templates/route.pug");
 
+app.get("/route/:dep/:arr", (req, res) => {
+    var html = routeTemplate({
+        dep: AirportDatabase.lookup(req.params.dep),
+        arr: AirportDatabase.lookup(req.params.arr),
+        route: RouteDatabase.lookup(req.params.dep, req.params.arr)
+    });
+    res.writeHead(200);
+    res.end(html);
+})
+
+// API ENDPOINTS
 app.get("/api/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
@@ -33,7 +41,7 @@ app.get("/api/airport", (req, res) => {
     res.end();
 })
 
-app.use("/api/route/:dep", (req, res, next) => {
+app.get("/api/route/:dep", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     })
@@ -42,7 +50,7 @@ app.use("/api/route/:dep", (req, res, next) => {
     res.end();
 })
 
-app.use("/api/route/:dep/:arr", (req, res, next) => {
+app.get("/api/route/:dep/:arr", (req, res) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr)
     if (!route) {
         res.writeHead(404);
