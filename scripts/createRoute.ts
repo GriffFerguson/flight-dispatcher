@@ -53,7 +53,7 @@ async function fetchAirport(code: String): Promise<Dispatch.Airport | void> {
 
 export async function createRoute(dep: String, arr: String): Promise<void> {
     const departure: Dispatch.Airport = await fetchAirport(dep) as Dispatch.Airport;
-    const arrival: Dispatch.Airport = await fetchAirport(arr)! as Dispatch.Airport;
+    const arrival: Dispatch.Airport = await fetchAirport(arr) as Dispatch.Airport;
     
     console.log("Saving route")
     const route = new Dispatch.Route(departure, arrival, parseInt(process.argv[4]));

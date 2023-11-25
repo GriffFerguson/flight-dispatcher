@@ -26,7 +26,7 @@ export class RouteDB extends DB {
     }
 
     save(data: Route) {
-        var duplicate = this.lookup(data.departure, data.arrival);
+        var duplicate = this.lookup(data.dep, data.arr);
         if (duplicate) {
             console.error("Route already exists");
             return;
@@ -68,7 +68,7 @@ export class RouteDB extends DB {
     lookupDeparture(code: String): Array<Route> {
         var routes: Array<Route> = [];
         for (var i = 0; i < this.db.length; i++) {
-            if (this.db[i].departure == code) {
+            if (this.db[i].dep == code) {
                 routes.push(this.db[i])
             }
         }
@@ -78,7 +78,7 @@ export class RouteDB extends DB {
     lookup(depCode: String, arrCode: String): Route | void {
         var opts = this.lookupDeparture(depCode);
         for (var i = 0; i< opts.length; i++) {
-            if (opts[i].arrival == arrCode) return opts[i];
+            if (opts[i].arr == arrCode) return opts[i];
         }
     }
 
@@ -112,21 +112,21 @@ interface AptLocation {
 }
 
 export class Route {
-    departure: String;
-    arrival: String;
-    distance: Number;
+    dep: String;
+    arr: String;
+    dis: Number;
     id: String;
     pax: Number;
     constructor(dep: Airport, arr: Airport, index: Number) {
-        this.departure = dep.icao;
-        this.arrival = arr.icao;
-        this.distance = greatCircle(
+        this.dep = dep.icao;
+        this.arr = arr.icao;
+        this.dis = greatCircle(
             dep.location.coordinates[0],
             dep.location.coordinates[1],
             arr.location.coordinates[0],
             arr.location.coordinates[1]
         )
-        this.id = flightNumber(this.departure, this.arrival);
+        this.id = flightNumber(this.dep, this.arr);
         this.pax = index;
     }
 }

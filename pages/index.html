@@ -35,6 +35,13 @@
         .then(res => {return res.json()})
         .then(json => {airports = json})
 
+        // Get information on airports from downloaded datbase
+        function findAirport(code) {
+            for (var i = 0; i < airports.length; i++) {
+                if (airports[i].icao == code) return airports[i];
+            }
+        }
+
         // Create map
         var map = L.map("map", {
             center: [20,0],
@@ -46,47 +53,66 @@
             attribution: "© <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
         }).addTo(map);
 
+        var markers = L.layerGroup().addTo(map);
 
-        function findAirport(code) {
-            for (var i = 0; i < airports.length; i++) {
-                if (airports[i].icao == code) return airports[i];
+        // Parse json data from a /route endpoint and display information accordingly
+        function routeParser(json) {
+            var onMap = [];
+            markers.clearLayers();
+            
+            // Create table entries and markers for arrival airports
+            for (var i = 0; i < json.length; i++) {
+                console.log(json[i])
+                var tr = document.createElement("tr");
+                tr.innerHTML = `<td>2VA${json[i].id}</td><td>${json[i].dep}</td><td>${json[i].arr}</td><td>${json[i].dis}nm</td>`
+                table.appendChild(tr);
+
+                // Get departure airport and add marker to map
+                var dep = findAirport(json[i].dep);
+                if (!onMap.includes(json[i].dep)) {
+                    onMap.push(json[i].dep);
+                    var depMarker = L.marker([dep.location.coordinates[0], dep.location.coordinates[1]], {alt: dep.icao}).addTo(markers);
+                    depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}`);;
+                }
+                
+
+                // Get arrival airport and add marker to map
+                var arr = findAirport(json[i].arr);
+                if (!onMap.includes(json[i].arr)) {
+                    onMap.push(json[i].arr);
+                    var arrMarker = L.marker([arr.location.coordinates[0], arr.location.coordinates[1]], {alt: arr.icao}).addTo(markers);
+                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}`)
+                }
+
+                // Draw route line
+                var line = L.polygon([
+                    [dep.location.coordinates[0], dep.location.coordinates[1]],
+                    [arr.location.coordinates[0], arr.location.coordinates[1]]
+                ]).addTo(markers);
             }
         }
 
         // Route searcher
         var table = document.getElementsByTagName("tbody")[0];
         document.getElementById("loader").addEventListener("submit", (e) => {
+
             table.innerHTML = "";
             e.preventDefault();
+            
             fetch(`/route/${document.getElementById("departure").value.toUpperCase()}`)
             .then(res => {
                 return res.json()
             })
-            .then(json => {
-                // Get departure airport and add marker to map
-                var dep = findAirport(json[0].departure);
-                var depMarker = L.marker([dep.location.coordinates[0], dep.location.coordinates[1]], {alt: dep.icao}).addTo(map);
-                depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}`)
-                map.panTo(new L.LatLng(dep.location.coordinates[0], dep.location.coordinates[1]));
-                
-                // Create table entries and markers for arrival airports
-                for (var i = 0; i < json.length; i++) {
-                    console.log(json[i])
-                    var tr = document.createElement("tr");
-                    tr.innerHTML = `<td>2VA${json[i].id}</td><td>${json[i].departure}</td><td>${json[i].arrival}</td><td>${json[i].distance}nm</td>`
-                    table.appendChild(tr);
-
-                    var arr = findAirport(json[i].arrival);
-                    var arrMarker = L.marker([arr.location.coordinates[0], arr.location.coordinates[1]], {alt: arr.icao}).addTo(map);
-                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}`)
-                
-                    var line = L.polygon([
-                        [dep.location.coordinates[0], dep.location.coordinates[1]],
-                        [arr.location.coordinates[0], arr.location.coordinates[1]]
-                    ]).addTo(map);
-                }
-            })
+            .then(routeParser)
+            //map.panTo(new L.LatLng(dep.location.coordinates[0], dep.location.coordinates[1]));
         })
+
+        // Display all routes on page load
+        fetch('/route')
+        .then(res => {
+            return res.json()
+        })
+        .then(routeParser)
     </script>
 </body>
 </html>

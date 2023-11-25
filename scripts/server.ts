@@ -21,7 +21,7 @@ app.get("/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
-    res.write(JSON.stringify(RouteDatabase));
+    res.write(JSON.stringify(RouteDatabase.db));
     res.end();
 })
 
@@ -45,8 +45,9 @@ app.use("/route/:dep", (req, res, next) => {
 app.use("/route/:dep/:arr", (req, res, next) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr)
     if (!route) {
-        createRoute(req.params.dep, req.params.arr);
-        route = RouteDatabase.lookup(req.params.dep, req.params.arr);
+        res.writeHead(404);
+        res.end();
+        return;
     }
     res.writeHead(200, {
         "Content-Type": "application/json"

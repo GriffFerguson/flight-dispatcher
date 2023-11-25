@@ -29,7 +29,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = require("path");
 const Dispatch = __importStar(require("./db"));
-const createRoute_1 = require("./createRoute");
 const RouteDatabase = new Dispatch.RouteDB();
 const AirportDatabase = new Dispatch.AirportDB();
 const app = (0, express_1.default)();
@@ -40,7 +39,7 @@ app.get("/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
-    res.write(JSON.stringify(RouteDatabase));
+    res.write(JSON.stringify(RouteDatabase.db));
     res.end();
 });
 app.get("/airport", (req, res) => {
@@ -61,8 +60,9 @@ app.use("/route/:dep", (req, res, next) => {
 app.use("/route/:dep/:arr", (req, res, next) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     if (!route) {
-        (0, createRoute_1.createRoute)(req.params.dep, req.params.arr);
-        route = RouteDatabase.lookup(req.params.dep, req.params.arr);
+        res.writeHead(404);
+        res.end();
+        return;
     }
     res.writeHead(200, {
         "Content-Type": "application/json"
