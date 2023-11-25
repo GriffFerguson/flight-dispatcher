@@ -4,8 +4,13 @@
 
 ## Endpoints
 `/`: graphical user interface
-`/route/<icao>`: find all flights from a given departure ICAO code
 `/route/<icao>/<icao>`: Get information regarding a full route
+
+## API Endpoints (preface with `/api`)
+`/route`: return all routes in the database
+`/route/<icao>`: find all flights from a given departure ICAO code
+`/route/<icao>/<icao>`: Get information regarding a full route (API version of the equivcalent user endpoint)
+`/airport`: return all airports in the database
 
 ## Commands
 Running from project root

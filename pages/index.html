@@ -31,7 +31,7 @@
     <script>
         // Get all airports
         var airports = [];
-        fetch("/airport")
+        fetch("/api/airport")
         .then(res => {return res.json()})
         .then(json => {airports = json})
 
@@ -63,8 +63,10 @@
             // Create table entries and markers for arrival airports
             for (var i = 0; i < json.length; i++) {
                 console.log(json[i])
-                var tr = document.createElement("tr");
-                tr.innerHTML = `<td>2VA${json[i].id}</td><td>${json[i].dep}</td><td>${json[i].arr}</td><td>${json[i].dis}nm</td>`
+                var tr = document.createElement("a");
+                tr.setAttribute("role", "row");
+                tr.setAttribute("href", `/route/${json[i].dep}/${json[i].arr}`);
+                tr.innerHTML = `<p role="cell">2VA${json[i].id}</p><p role="cell">${json[i].dep}</p><p role="cell">${json[i].arr}</p><p role="cell">${json[i].dis}nm</p>`
                 table.appendChild(tr);
 
                 // Get departure airport and add marker to map
@@ -97,9 +99,9 @@
         document.getElementById("loader").addEventListener("submit", (e) => {
 
             table.innerHTML = "";
-            e.preventDefault();
+            e.prevenpefault();
             
-            fetch(`/route/${document.getElementById("departure").value.toUpperCase()}`)
+            fetch(`/api/route/${document.getElementById("departure").value.toUpperCase()}`)
             .then(res => {
                 return res.json()
             })
@@ -108,7 +110,7 @@
         })
 
         // Display all routes on page load
-        fetch('/route')
+        fetch('/api/route')
         .then(res => {
             return res.json()
         })

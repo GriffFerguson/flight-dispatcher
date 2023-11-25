@@ -35,21 +35,21 @@ const app = (0, express_1.default)();
 app.use("/static", express_1.default.static((0, path_1.join)(__dirname, "../assets")));
 app.use("/", express_1.default.static((0, path_1.join)(__dirname, "../pages")));
 app.listen("5000");
-app.get("/route", (req, res) => {
+app.get("/api/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
     res.write(JSON.stringify(RouteDatabase.db));
     res.end();
 });
-app.get("/airport", (req, res) => {
+app.get("/api/airport", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
     res.write(JSON.stringify(AirportDatabase.db));
     res.end();
 });
-app.use("/route/:dep", (req, res, next) => {
+app.use("/api/route/:dep", (req, res, next) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
@@ -57,7 +57,7 @@ app.use("/route/:dep", (req, res, next) => {
     res.write(JSON.stringify(possibleRoutes));
     res.end();
 });
-app.use("/route/:dep/:arr", (req, res, next) => {
+app.use("/api/route/:dep/:arr", (req, res, next) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     if (!route) {
         res.writeHead(404);

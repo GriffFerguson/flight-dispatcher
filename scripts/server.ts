@@ -17,7 +17,7 @@ app.listen("5000");
 //     res.write(file);
 // })
 
-app.get("/route", (req, res) => {
+app.get("/api/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
@@ -25,7 +25,7 @@ app.get("/route", (req, res) => {
     res.end();
 })
 
-app.get("/airport", (req, res) => {
+app.get("/api/airport", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
@@ -33,7 +33,7 @@ app.get("/airport", (req, res) => {
     res.end();
 })
 
-app.use("/route/:dep", (req, res, next) => {
+app.use("/api/route/:dep", (req, res, next) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
     })
@@ -42,7 +42,7 @@ app.use("/route/:dep", (req, res, next) => {
     res.end();
 })
 
-app.use("/route/:dep/:arr", (req, res, next) => {
+app.use("/api/route/:dep/:arr", (req, res, next) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr)
     if (!route) {
         res.writeHead(404);
