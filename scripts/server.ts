@@ -25,6 +25,7 @@ app.get("/route/:dep/:arr", (req, res) => {
 })
 
 // API ENDPOINTS
+// Routes
 app.get("/api/route", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
@@ -32,15 +33,6 @@ app.get("/api/route", (req, res) => {
     res.write(JSON.stringify(RouteDatabase.db));
     res.end();
 })
-
-app.get("/api/airport", (req, res) => {
-    res.writeHead(200, {
-        "Content-Type": "application/json"
-    });
-    res.write(JSON.stringify(AirportDatabase.db));
-    res.end();
-})
-
 app.get("/api/route/:dep", (req, res) => {
     res.writeHead(200, {
         "Content-Type": "application/json"
@@ -59,7 +51,28 @@ app.get("/api/route/:dep/:arr", (req, res) => {
     }
     res.writeHead(200, {
         "Content-Type": "application/json"
-    })
+    });
     res.send(JSON.stringify(route));
+    res.end();
+})
+// Airports
+app.get("/api/airport", (req, res) => {
+    res.writeHead(200, {
+        "Content-Type": "application/json"
+    });
+    res.write(JSON.stringify(AirportDatabase.db));
+    res.end();
+})
+
+app.get("/api/airport/:code", (req, res) => {
+    var port = AirportDatabase.lookup(req.params.code);
+    if (port) {
+        res.writeHead(200, {
+            "Content-Type": "application/json"
+        });
+        res.write(JSON.stringify(port));
+    } else {
+        res.writeHead(404);
+    }
     res.end();
 })

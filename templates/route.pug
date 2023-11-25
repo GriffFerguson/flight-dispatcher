@@ -26,6 +26,8 @@ html(lang="en")
                 p 
                     b Estimated Time Enroute: 
                     span= Math.floor(route.dis / 300) + "hrs " + Math.round(((route.dis / 300) - Math.floor(route.dis / 300)) * 60) + "mins"
+                a(href="/route/" + arr.icao + "/" + dep.icao)
+                    span View return flight
             #airport-box
                 h2 Departure
                 p 

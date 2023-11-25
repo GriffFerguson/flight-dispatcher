@@ -99,7 +99,7 @@
         document.getElementById("loader").addEventListener("submit", (e) => {
 
             table.innerHTML = "";
-            e.prevenpefault();
+            e.preventDefault();
             
             fetch(`/api/route/${document.getElementById("departure").value.toUpperCase()}`)
             .then(res => {
