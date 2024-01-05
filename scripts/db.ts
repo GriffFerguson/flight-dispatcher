@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync, PathOrFileDescriptor } from "fs";
 import {join} from "path";
 
+// Parent database class
 class DB {
     db: Array<any>;
     dbURL: PathOrFileDescriptor
@@ -15,6 +16,7 @@ class DB {
     }
 }
 
+// Specific databases
 export class RouteDB extends DB {
     pool: Array<number>;
     constructor() {
@@ -89,7 +91,7 @@ export class RouteDB extends DB {
 
 export class AirportDB extends DB {
     constructor() {
-        super(join(__dirname, "../data/airports.json"))
+        super(join(__dirname, "../data/airports.json"));
     }
 
     lookup(code: String): Airport | boolean {
@@ -97,9 +99,15 @@ export class AirportDB extends DB {
         else var search = "iata";
         
         for (var i = 0; i < this.db.length; i++) {
-            if (this.db[i][search] == code) return this.db[i]
+            if (this.db[i][search] == code) return this.db[i];
         }
         return false;
+    }
+}
+
+export class AircraftDB extends DB {
+    constructor() {
+        super(join(__dirname, "../data/airports.json"));
     }
 }
 
@@ -111,6 +119,7 @@ interface AptLocation {
     coordinates: [number, number]
 }
 
+// Individual items
 export class Route {
     dep: String;
     arr: String;
@@ -136,6 +145,7 @@ export class Airport {
     iata: String;
     location: AptLocation;
     name: String;
+    hub: boolean | undefined;
 
     constructor(icao: String, iata: String, name: String, coords: [number, number], iso: String, city: String, country: String, state?: String) {
         this.icao = icao;
@@ -169,15 +179,13 @@ export class Aircraft {
     }
 
     setLocation(loc: String) {
-        this.location = loc
+        this.location = loc;
     }
 
     setStatus(msg: String) {
         this.status = msg;
     }
 }
-
-
 
 function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Number {
     const r = 6371; // km
@@ -187,10 +195,10 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
                   + Math.cos(lat1 * p) * Math.cos(lat2 * p) *
                     (1 - Math.cos((lon2 - lon1) * p)) / 2;
   
-    return Math.round((2 * r * Math.asin(Math.sqrt(a))) / 1.852);
-  }
+    return Math.round((2 * r * Math.asin(Math.sqrt(a))) / 1.852); // Convert to nautical miles
+}
 
-  function flightNumber(depCode: String, arrCode: String): String {
+function flightNumber(depCode: String, arrCode: String): String {
     var id = [0,"0"];
     // Identify region
     var depRegion = regionID(depCode);
@@ -208,9 +216,9 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
         } else id[1] = "0" + id[1]
     }
     return `${id[0]}${id[1]}`;
-  }
+}
 
-  function regionID (code: String): number {
+function regionID (code: String): number {
     switch (code[0]) {
         // North America
         case "C":
@@ -252,4 +260,28 @@ function greatCircle(lat1: number, lon1: number, lat2: number, lon2: number): Nu
         default:
             return 7;
     }
-  }
+}
+
+// Calculate passenger index
+function getPaxIndex(paxCount: number): number {
+    if (paxCount < 55) return 0;
+    else if (paxCount < 80) return 1;
+    else if (paxCount < 100) return 2;
+    else if (paxCount < 125) return 3;
+    else if (paxCount < 150) return 4;
+    else if (paxCount < 180) return 5;
+    else if (paxCount < 200) return 6;
+    else if (paxCount < 230) return 7;
+    else if (paxCount < 250) return 8;
+    else if (paxCount < 280) return 9;
+    else if (paxCount < 300) return 10;
+    else if (paxCount < 330) return 11;
+    else if (paxCount < 355) return 12;
+    else if (paxCount < 370) return 13;
+    else if (paxCount < 400) return 14;
+    else if (paxCount < 425) return 15;
+    else if (paxCount < 470) return 16;
+    else if (paxCount < 510) return 17;
+    else if (paxCount < 550) return 18;
+    else return 19;
+}

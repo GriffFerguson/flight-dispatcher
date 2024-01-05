@@ -22,7 +22,6 @@
             <th>Departure</th>
             <th>Arrival</th>
             <th>Distance</th>
-            <th>Aircraft</th>
         </thead>
         <tbody>
 
@@ -50,8 +49,22 @@
 
         L.tileLayer(`https://tile.openstreetmap.org/{z}/{x}/{y}.png`, {
             maxZoom:19,
-            attribution: "© <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
+            attribution: "&copy; <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
         }).addTo(map);
+
+        const norm = L.icon({
+            iconUrl: '/static/svg/airport.svg',
+            iconSize: [16,16],
+            iconAnchor: [8,8],
+            popupAnchor: [0, -8]
+        })
+
+        const hub = L.icon({
+            iconUrl: '/static/svg/airport_hub.svg',
+            iconSize: [16,16],
+            iconAnchor: [8,8],
+            popupAnchor: [0, -8]
+        })
 
         var markers = L.layerGroup().addTo(map);
 
@@ -73,8 +86,14 @@
                 var dep = findAirport(json[i].dep);
                 if (!onMap.includes(json[i].dep)) {
                     onMap.push(json[i].dep);
-                    var depMarker = L.marker([dep.location.coordinates[0], dep.location.coordinates[1]], {alt: dep.icao}).addTo(markers);
-                    depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}`);
+                    var depMarker = L.marker(
+                        [dep.location.coordinates[0], dep.location.coordinates[1]], 
+                        {
+                            alt: dep.icao,
+                            icon: (dep.hub ? hub : norm)
+                        }
+                        ).addTo(markers);
+                    depMarker.bindPopup(`<b>${dep.icao} / ${dep.iata}</b><br>${dep.name}<br>${dep.location.city}, ${dep.location.state}, ${dep.location.country}${dep.hub ? "<br>Hub Airport" : ""}`);
                 }
                 
 
@@ -82,8 +101,14 @@
                 var arr = findAirport(json[i].arr);
                 if (!onMap.includes(json[i].arr)) {
                     onMap.push(json[i].arr);
-                    var arrMarker = L.marker([arr.location.coordinates[0], arr.location.coordinates[1]], {alt: arr.icao}).addTo(markers);
-                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}`);
+                    var arrMarker = L.marker(
+                        [arr.location.coordinates[0], arr.location.coordinates[1]], 
+                        {
+                            alt: arr.icao,
+                            icon: (arr.hub ? hub : norm)
+                        }
+                    ).addTo(markers);
+                    arrMarker.bindPopup(`<b>${arr.icao} / ${arr.iata}</b><br>${arr.name}<br>${arr.location.city}, ${arr.location.state}, ${arr.location.country}${arr.hub ? "<br>Hub Airport" : ""}`);
                 }
 
                 // Draw route line

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Aircraft = exports.Airport = exports.Route = exports.AirportDB = exports.RouteDB = void 0;
+exports.Aircraft = exports.Airport = exports.Route = exports.AircraftDB = exports.AirportDB = exports.RouteDB = void 0;
 const fs_1 = require("fs");
 const path_1 = require("path");
 class DB {
@@ -95,6 +95,12 @@ class AirportDB extends DB {
     }
 }
 exports.AirportDB = AirportDB;
+class AircraftDB extends DB {
+    constructor() {
+        super((0, path_1.join)(__dirname, "../data/airports.json"));
+    }
+}
+exports.AircraftDB = AircraftDB;
 class Route {
     constructor(dep, arr, index) {
         this.dep = dep.icao;
@@ -197,4 +203,46 @@ function regionID(code) {
         default:
             return 7;
     }
+}
+function getPaxIndex(paxCount) {
+    if (paxCount < 55)
+        return 0;
+    else if (paxCount < 80)
+        return 1;
+    else if (paxCount < 100)
+        return 2;
+    else if (paxCount < 125)
+        return 3;
+    else if (paxCount < 150)
+        return 4;
+    else if (paxCount < 180)
+        return 5;
+    else if (paxCount < 200)
+        return 6;
+    else if (paxCount < 230)
+        return 7;
+    else if (paxCount < 250)
+        return 8;
+    else if (paxCount < 280)
+        return 9;
+    else if (paxCount < 300)
+        return 10;
+    else if (paxCount < 330)
+        return 11;
+    else if (paxCount < 355)
+        return 12;
+    else if (paxCount < 370)
+        return 13;
+    else if (paxCount < 400)
+        return 14;
+    else if (paxCount < 425)
+        return 15;
+    else if (paxCount < 470)
+        return 16;
+    else if (paxCount < 510)
+        return 17;
+    else if (paxCount < 550)
+        return 18;
+    else
+        return 19;
 }

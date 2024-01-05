@@ -15,10 +15,18 @@ app.listen("5000");
 const routeTemplate = pug.compileFile("./templates/route.pug");
 
 app.get("/route/:dep/:arr", (req, res) => {
+    var route = RouteDatabase.lookup(req.params.dep, req.params.arr);
+    if (!route) {
+        res.writeHead(404);
+        res.write(`<title>Error 404: No Route Found</title>`)
+        res.end(`<p style=\"font-family:monospace\">Error: The route departing from ${req.params.dep} and arriving at ${req.params.arr} does not exist.<br><a href=\"/\">Return home</a></p>`);
+        return;
+    }
+
     var html = routeTemplate({
         dep: AirportDatabase.lookup(req.params.dep),
         arr: AirportDatabase.lookup(req.params.arr),
-        route: RouteDatabase.lookup(req.params.dep, req.params.arr)
+        route: route
     });
     res.writeHead(200);
     res.end(html);
@@ -46,13 +54,13 @@ app.get("/api/route/:dep/:arr", (req, res) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr)
     if (!route) {
         res.writeHead(404);
-        res.end();
+        res.end("Error 404: Route does not exist");
         return;
     }
     res.writeHead(200, {
         "Content-Type": "application/json"
     });
-    res.send(JSON.stringify(route));
+    res.write(JSON.stringify(route));
     res.end();
 })
 // Airports

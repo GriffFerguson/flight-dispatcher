@@ -89,10 +89,10 @@ html(lang="en")
             }).addTo(map);
 
             var depMarker = L.marker([#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}], {alt: "#{dep.icao}"}).addTo(map);
-            depMarker.bindPopup(`<b>#{dep.icao} / #{dep.iata}</b><br>#{dep.name}<br>#{dep.location.city}, #{dep.location.state}, #{dep.location.country}`);
+            depMarker.bindPopup(`<b><u>Departure Airport</u><br>#{dep.icao} / #{dep.iata}</b><br>#{dep.name}<br>#{dep.location.city}, #{dep.location.state}, #{dep.location.country}`);
             
             var arrMarker = L.marker([#{arr.location.coordinates[0]}, #{arr.location.coordinates[1]}], {alt: "#{arr.icao}"}).addTo(map);
-            arrMarker.bindPopup(`<b>#{arr.icao} / #{arr.iata}</b><br>#{arr.name}<br>#{arr.location.city}, #{arr.location.state}, #{arr.location.country}`);
+            arrMarker.bindPopup(`<b><u>Arrival Airport</u><br>#{arr.icao} / #{arr.iata}</b><br>#{arr.name}<br>#{arr.location.city}, #{arr.location.state}, #{arr.location.country}`);
 
             L.polygon([
                 [#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}],

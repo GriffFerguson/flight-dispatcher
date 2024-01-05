@@ -64,3 +64,7 @@ export async function createRoute(dep: String, arr: String): Promise<void> {
 if (process.argv[2] || process.argv[3]) createRoute(process.argv[2], process.argv[3]).then(() => {
     if (process.argv[5] == "return") createRoute(process.argv[3], process.argv[2]);
 })
+
+/* Command Syntax
+ * node scripts/createRoute.js <departure icao/iata> <arrival icao/iata> <pax index> <include return flight>
+ */
