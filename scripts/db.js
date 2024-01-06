@@ -26,34 +26,10 @@ class RouteDB extends DB {
             return;
         }
         this.db.push(data);
-        switch (data.id[0]) {
-            case "0":
-                this.pool[0]++;
-                break;
-            case "1":
-                this.pool[1]++;
-                break;
-            case "2":
-                this.pool[2]++;
-                break;
-            case "3":
-                this.pool[3]++;
-                break;
-            case "4":
-                this.pool[4]++;
-                break;
-            case "5":
-                this.pool[5]++;
-                break;
-            case "6":
-                this.pool[6]++;
-                break;
-            case "7":
-                this.pool[7]++;
-                break;
-            default:
-                this.pool[8]++;
-                break;
+        var poolIndex = parseInt(data.id[0]);
+        this.pool[poolIndex]++;
+        if (this.pool[poolIndex] > 999) {
+            this.pool[poolIndex] = 1;
         }
         (0, fs_1.writeFileSync)(this.dbURL, `{"pool":${JSON.stringify(this.pool)},"routes":${JSON.stringify(this.db)}}`, { encoding: "utf8" });
     }
@@ -91,7 +67,6 @@ class AirportDB extends DB {
             if (this.db[i][search] == code)
                 return this.db[i];
         }
-        return false;
     }
 }
 exports.AirportDB = AirportDB;
@@ -129,17 +104,17 @@ exports.Airport = Airport;
 class Aircraft {
     constructor(type, maxPax, range, registration) {
         this.type = type;
-        this.maxPax = maxPax;
+        this.pax = maxPax;
         this.range = range;
-        this.regstration = registration;
-        this.location = "KIAH";
-        this.status = "On Ground";
+        this.reg = registration;
+        this.loc = "KIAH";
+        this.stat = "On Ground";
     }
     setLocation(loc) {
-        this.location = loc;
+        this.loc = loc;
     }
     setStatus(msg) {
-        this.status = msg;
+        this.stat = msg;
     }
 }
 exports.Aircraft = Aircraft;

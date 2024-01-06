@@ -13,6 +13,30 @@ app.use("/", express.static(join(__dirname, "../pages")));
 app.listen("5000");
 
 const routeTemplate = pug.compileFile("./templates/route.pug");
+const airportTemplate = pug.compileFile("./templates/airport.pug");
+
+app.get("/airport/:dep", (req, res) => {
+    const dep = AirportDatabase.lookup(req.params.dep) as Dispatch.Airport;
+    const routes = RouteDatabase.lookupDeparture(req.params.dep);
+    var arr: Dispatch.Airport[] = [];
+
+    for (var i = 0; i < routes.length; i++) {
+        var apt = AirportDatabase.lookup(routes[i].arr);
+        arr.push(apt as Dispatch.Airport);
+    }
+
+    if (!dep.hub) {
+        dep.hub = false;
+    }
+
+    const html = airportTemplate({
+        depApt: dep,
+        flights: routes,
+        arrApts: JSON.stringify(arr)
+    });
+    res.writeHead(200);
+    res.end(html);
+})
 
 app.get("/route/:dep/:arr", (req, res) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr);

@@ -37,6 +37,26 @@ app.use("/static", express_1.default.static((0, path_1.join)(__dirname, "../asse
 app.use("/", express_1.default.static((0, path_1.join)(__dirname, "../pages")));
 app.listen("5000");
 const routeTemplate = pug_1.default.compileFile("./templates/route.pug");
+const airportTemplate = pug_1.default.compileFile("./templates/airport.pug");
+app.get("/airport/:dep", (req, res) => {
+    const dep = AirportDatabase.lookup(req.params.dep);
+    const routes = RouteDatabase.lookupDeparture(req.params.dep);
+    var arr = [];
+    for (var i = 0; i < routes.length; i++) {
+        var apt = AirportDatabase.lookup(routes[i].arr);
+        arr.push(apt);
+    }
+    if (!dep.hub) {
+        dep.hub = false;
+    }
+    const html = airportTemplate({
+        depApt: dep,
+        flights: routes,
+        arrApts: JSON.stringify(arr)
+    });
+    res.writeHead(200);
+    res.end(html);
+});
 app.get("/route/:dep/:arr", (req, res) => {
     var route = RouteDatabase.lookup(req.params.dep, req.params.arr);
     if (!route) {

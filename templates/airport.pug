@@ -1,0 +1,69 @@
+doctype html 
+html(lang="en")
+    head 
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="/static/style.css")
+        link(rel="stylesheet", href="/static/infotable.css")
+        title #{depApt.icao} Airport Details | Flight Dispatcher
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    body 
+        h1 
+            | Stratos Virtual Airways Airport Details:
+            br 
+            | #{depApt.icao} (#{depApt.name})
+        #map
+        div(role="table")
+            div(role="rowgroup")
+                div(role="row")
+                    p(role="columnheader") Flight
+                    p(role="columnheader") Departure
+                    p(role="columnheader") Arrival
+                    p(role="columnheader") Distance
+            div(role="rowgroup")
+                each flight in flights
+                    a(role="row", href="/route/" + flight.dep + "/" + flight.arr)
+                        p(role="cell")= "2VA" + flight.id
+                        p(role="cell")= flight.dep
+                        p(role="cell")= flight.arr
+                        p(role="cell")= flight.dis + "nm"
+        script. 
+            var map = L.map("map", {
+                center: [#{depApt.location.coordinates[0]}, #{depApt.location.coordinates[1]}],
+                zoom: 4
+            });
+
+            const norm = L.icon({
+                iconUrl: '/static/svg/airport.svg',
+                iconSize: [16,16],
+                iconAnchor: [8,8],
+                popupAnchor: [0, -8]
+            });
+
+            const hub = L.icon({
+                iconUrl: '/static/svg/airport_hub.svg',
+                iconSize: [16,16],
+                iconAnchor: [8,8],
+                popupAnchor: [0, -8]
+            });
+
+            L.tileLayer(`https://tile.openstreetmap.org/{z}/{x}/{y}.png`, {
+                maxZoom:19,
+                attribution: "© <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
+            }).addTo(map);
+        script.
+            const arrApts = JSON.parse(`!{arrApts}`)
+
+            var depMarker = L.marker([#{depApt.location.coordinates[0]}, #{depApt.location.coordinates[1]}], {alt: "#{depApt.icao}", icon: #{depApt.hub} ? hub : norm}).addTo(map);
+            depMarker.bindPopup(`<p class="popup"><b><u>Departure Airport</u><br>#{depApt.icao} / #{depApt.iata}</b><br>#{depApt.name}<br>#{depApt.location.city}, #{depApt.location.state}, #{depApt.location.country}#{depApt.hub ? "<br>Hub Airport" : ""}</p>`);
+            
+            for (var i = 0; i < arrApts.length; i++) {
+                var arrMarker = L.marker([arrApts[i].location.coordinates[0], arrApts[i].location.coordinates[1]], {alt: arrApts[i].icao, icon: (arrApts[i].hub ? hub : norm)}).addTo(map);
+                arrMarker.bindPopup(`<a class="popup" href="/route/#{depApt.icao}/${arrApts[i].icao}"><b><u>Arrival Airport</u><br>${arrApts[i].icao} / ${arrApts[i].iata}</b><br>${arrApts[i].name}<br>${arrApts[i].location.city}, ${arrApts[i].location.state}, ${arrApts[i].location.country}${arrApts[i].hub ? "<br>Hub Airport" : ""}</a><br><a class="popup-link" href="/airport/${arrApts[i].icao}">View flights from airport</a>`);
+
+                L.polygon([
+                    [#{depApt.location.coordinates[0]}, #{depApt.location.coordinates[1]}],
+                    [arrApts[i].location.coordinates[0], arrApts[i].location.coordinates[1]]
+                ]).addTo(map);
+            }

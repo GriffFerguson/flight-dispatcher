@@ -70,7 +70,12 @@ async function createRoute(dep, arr) {
     const departure = await fetchAirport(dep);
     const arrival = await fetchAirport(arr);
     console.log("Saving route");
-    const route = new Dispatch.Route(departure, arrival, parseInt(process.argv[4]));
+    var pax = [];
+    var submittedPax = process.argv[4].split(",");
+    for (var i = 0; i < submittedPax.length; i++) {
+        pax.push(parseInt(submittedPax[i]));
+    }
+    const route = new Dispatch.Route(departure, arrival, pax);
     routes.save(route);
     console.log("Done!");
 }

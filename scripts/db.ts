@@ -27,42 +27,49 @@ export class RouteDB extends DB {
         this.db = this.db.routes;
     }
 
-    save(data: Route) {
+    save(data: Route): void {
         var duplicate = this.lookup(data.dep, data.arr);
         if (duplicate) {
             console.error("Route already exists");
             return;
         }
         this.db.push(data);
-        switch (data.id[0]) {
-            case "0":
-                this.pool[0]++;
-                break;
-            case "1":
-                this.pool[1]++;
-                break;
-            case "2":
-                this.pool[2]++;
-                break;
-            case "3":
-                this.pool[3]++;
-                break;
-            case "4":
-                this.pool[4]++;
-                break;
-            case "5":
-                this.pool[5]++;
-                break;
-            case "6":
-                this.pool[6]++;
-                break;
-            case "7":
-                this.pool[7]++;
-                break;
-            default:
-                this.pool[8]++;
-                break;
+
+        var poolIndex = parseInt(data.id[0]);
+        this.pool[poolIndex]++;
+        if (this.pool[poolIndex] > 999) {
+            this.pool[poolIndex] = 1;
         }
+
+        // switch (data.id[0]) {
+        //     case "0":
+        //         this.pool[0]++;
+        //         break;
+        //     case "1":
+        //         this.pool[1]++;
+        //         break;
+        //     case "2":
+        //         this.pool[2]++;
+        //         break;
+        //     case "3":
+        //         this.pool[3]++;
+        //         break;
+        //     case "4":
+        //         this.pool[4]++;
+        //         break;
+        //     case "5":
+        //         this.pool[5]++;
+        //         break;
+        //     case "6":
+        //         this.pool[6]++;
+        //         break;
+        //     case "7":
+        //         this.pool[7]++;
+        //         break;
+        //     default:
+        //         this.pool[8]++;
+        //         break;
+        // }
 
         writeFileSync(this.dbURL, `{"pool":${JSON.stringify(this.pool)},"routes":${JSON.stringify(this.db)}}`, {encoding:"utf8"});
     }
@@ -77,7 +84,7 @@ export class RouteDB extends DB {
         return routes;
     }
 
-    lookup(depCode: String, arrCode: String): Route | void {
+    lookup(depCode: String, arrCode: String): Route | undefined {
         var opts = this.lookupDeparture(depCode);
         for (var i = 0; i< opts.length; i++) {
             if (opts[i].arr == arrCode) return opts[i];
@@ -94,14 +101,13 @@ export class AirportDB extends DB {
         super(join(__dirname, "../data/airports.json"));
     }
 
-    lookup(code: String): Airport | boolean {
+    lookup(code: String): Airport | undefined {
         if (code.length == 4) var search = "icao";
         else var search = "iata";
         
         for (var i = 0; i < this.db.length; i++) {
             if (this.db[i][search] == code) return this.db[i];
         }
-        return false;
     }
 }
 
@@ -125,8 +131,8 @@ export class Route {
     arr: String;
     dis: Number;
     id: String;
-    pax: Number;
-    constructor(dep: Airport, arr: Airport, index: Number) {
+    pax: Number[];
+    constructor(dep: Airport, arr: Airport, index: Number[]) {
         this.dep = dep.icao;
         this.arr = arr.icao;
         this.dis = greatCircle(
@@ -163,27 +169,27 @@ export class Airport {
 
 export class Aircraft {
     type: String;
-    maxPax: Number;
+    pax: Number;
     range: Number;
-    location: String;
-    regstration: String;
-    status: String;
+    loc: String;
+    reg: String;
+    stat: String;
     
     constructor(type: String, maxPax: Number, range: Number, registration: String) {
         this.type = type;
-        this.maxPax = maxPax;
+        this.pax = maxPax;
         this.range = range;
-        this.regstration = registration;
-        this.location = "KIAH"
-        this.status = "On Ground"
+        this.reg = registration;
+        this.loc = "KIAH"
+        this.stat = "On Ground"
     }
 
     setLocation(loc: String) {
-        this.location = loc;
+        this.loc = loc;
     }
 
     setStatus(msg: String) {
-        this.status = msg;
+        this.stat = msg;
     }
 }
 

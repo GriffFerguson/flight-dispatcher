@@ -56,7 +56,12 @@ export async function createRoute(dep: String, arr: String): Promise<void> {
     const arrival: Dispatch.Airport = await fetchAirport(arr) as Dispatch.Airport;
     
     console.log("Saving route")
-    const route = new Dispatch.Route(departure, arrival, parseInt(process.argv[4]));
+    var pax: Number[] = [];
+    var submittedPax = process.argv[4].split(",")
+    for (var i = 0; i < submittedPax.length; i++) {
+        pax.push(parseInt(submittedPax[i]));
+    }
+    const route = new Dispatch.Route(departure, arrival, pax);
     routes.save(route);
     console.log("Done!")
 }

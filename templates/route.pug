@@ -14,8 +14,8 @@ html(lang="en")
             br 
             | #{dep.icao} (#{dep.name}) to #{arr.icao} (#{arr.name})
         #map
-        #route-info
-            #metadata 
+        .route-info
+            .metadata 
                 h2 Route Information
                 p
                     b Flight Number: 
@@ -28,7 +28,7 @@ html(lang="en")
                     span= Math.floor(route.dis / 300) + "hrs " + Math.round(((route.dis / 300) - Math.floor(route.dis / 300)) * 60) + "mins"
                 a(href="/route/" + arr.icao + "/" + dep.icao)
                     span View return flight
-            #airport-box
+            .airport-box
                 h2 Departure
                 p 
                     b ICAO / IATA: 
@@ -48,7 +48,9 @@ html(lang="en")
                     li
                         b Country: 
                         span #{dep.location.country}
-            #airport-box 
+                a(href="/airport/" + dep.icao)
+                    span View flights from airport
+            .airport-box 
                 h2 Arrival
                 p 
                     b ICAO / IATA: 
@@ -68,11 +70,28 @@ html(lang="en")
                     li
                         b Country: 
                         span #{arr.location.country}
+                a(href="/airport/" + arr.icao)
+                    span View flights from airport
         script. 
             var map = L.map("map", {
                 center: [#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}],
                 zoom: 4
             });
+
+            const depIcon = L.icon({
+                iconUrl: '/static/svg/departure.svg',
+                iconSize: [16,16],
+                iconAnchor: [8,8],
+                popupAnchor: [0, -8]
+            });
+            
+            const arrIcon = L.icon({
+                iconUrl: '/static/svg/arrival.svg',
+                iconSize: [16,16],
+                iconAnchor: [8,8],
+                popupAnchor: [0, -8]
+            });
+
 
             /*map.dragging.disable();
             map.touchZoom.disable();
@@ -88,11 +107,11 @@ html(lang="en")
                 attribution: "© <a href=\"https://www.openstreetmap.org/\" target=\"_blank\">OpenStreetMap</a>"
             }).addTo(map);
 
-            var depMarker = L.marker([#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}], {alt: "#{dep.icao}"}).addTo(map);
-            depMarker.bindPopup(`<b><u>Departure Airport</u><br>#{dep.icao} / #{dep.iata}</b><br>#{dep.name}<br>#{dep.location.city}, #{dep.location.state}, #{dep.location.country}`);
+            var depMarker = L.marker([#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}], {alt: "#{dep.icao}", icon: depIcon}).addTo(map);
+            depMarker.bindPopup(`<a class="popup" href="/airport/#{dep.icao}"><b><u>Departure Airport</u><br>#{dep.icao} / #{dep.iata}</b><br>#{dep.name}<br>#{dep.location.city}, #{dep.location.state}, #{dep.location.country}</a>`);
             
-            var arrMarker = L.marker([#{arr.location.coordinates[0]}, #{arr.location.coordinates[1]}], {alt: "#{arr.icao}"}).addTo(map);
-            arrMarker.bindPopup(`<b><u>Arrival Airport</u><br>#{arr.icao} / #{arr.iata}</b><br>#{arr.name}<br>#{arr.location.city}, #{arr.location.state}, #{arr.location.country}`);
+            var arrMarker = L.marker([#{arr.location.coordinates[0]}, #{arr.location.coordinates[1]}], {alt: "#{arr.icao}", icon: arrIcon}).addTo(map);
+            arrMarker.bindPopup(`<a class="popup" href="/airport/#{arr.icao}"><b><u>Arrival Airport</u><br>#{arr.icao} / #{arr.iata}</b><br>#{arr.name}<br>#{arr.location.city}, #{arr.location.state}, #{arr.location.country}</a>`);
 
             L.polygon([
                 [#{dep.location.coordinates[0]}, #{dep.location.coordinates[1]}],

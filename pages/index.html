@@ -5,23 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stratos Virtual Airlines Flight Dispatcher</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/infotable.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 </head>
 <body>
     <h1>Stratos Virtual Airways - Flight Dispatcher</h1>
     <div id="map"></div>
-    <form id="loader">
+    <form id="search">
         <label for="departure">Enter departure ICAO:</label>
         <input id="departure" type="text">
         <input type="submit" value="Find routes">
     </form>
     <table>
         <thead>
-            <th>Flight</th>
-            <th>Departure</th>
-            <th>Arrival</th>
-            <th>Distance</th>
+            <tr>
+                <th>Flight</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Distance</th>
+            </tr>
         </thead>
         <tbody>
 
@@ -119,19 +122,25 @@
             }
         }
 
-        // Route searcher
+        // // Route searcher
         var table = document.getElementsByTagName("tbody")[0];
-        document.getElementById("loader").addEventListener("submit", (e) => {
+        // document.getElementById("search").addEventListener("submit", (e) => {
 
-            table.innerHTML = "";
-            e.preventDefault();
+        //     table.innerHTML = "";
+        //     e.preventDefault();
             
-            fetch(`/api/route/${document.getElementById("departure").value.toUpperCase()}`)
-            .then(res => {
-                return res.json()
-            })
-            .then(routeParser)
-            //map.panTo(new L.LatLng(dep.location.coordinates[0], dep.location.coordinates[1]));
+        //     fetch(`/api/route/${document.getElementById("departure").value.toUpperCase()}`)
+        //     .then(res => {
+        //         return res.json()
+        //     })
+        //     .then(routeParser)
+        //     //map.panTo(new L.LatLng(dep.location.coordinates[0], dep.location.coordinates[1]));
+        // })
+
+        document.getElementById("search").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            window.location.href = "/airport/" + document.getElementById("departure").value.toUpperCase();
         })
 
         // Display all routes on page load
